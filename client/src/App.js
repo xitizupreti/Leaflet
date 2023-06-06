@@ -4,16 +4,10 @@ import {
   TileLayer,
   Marker,
   Popup,
-  LayerGroup,
-  Circle,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import io from "socket.io-client";
-
-const steady = { color: "green" };
-const falling = { color: "yellow" };
-const rising = { color: "red" };
 
 const redmark = new L.Icon({
   iconUrl: require("./redmark.png"),
@@ -21,6 +15,14 @@ const redmark = new L.Icon({
 });
 const yellowmark = new L.Icon({
   iconUrl: require("./yellowmark.png"),
+  iconSize: [20, 30],
+});
+const greenmark = new L.Icon({
+  iconUrl: require("./greenmark.png"),
+  iconSize: [20, 30],
+});
+const blackmark = new L.Icon({
+  iconUrl: require("./blackmark.png"),
   iconSize: [20, 30],
 });
 
@@ -55,47 +57,17 @@ const App = () => {
             <Marker
               position={[item.latitude, item.longitude]}
               icon={
-                item.status === "BELOW WARNING LEVEL" ? yellowmark : redmark
+                item.steady === "STEADY"
+                  ? greenmark
+                  : item.steady === "RISING"
+                  ? redmark
+                  : item.steady === "FALLING"
+                  ? yellowmark
+                  : blackmark
               }
             >
               <Popup>{item.name}</Popup>
             </Marker>
-          );
-        }
-        
-      })}
-      {data.map((item)=>{
-        if (item.steady === "STEADY") {
-          return (
-            <LayerGroup>
-              <Circle
-                center={[item.latitude, item.longitude]}
-                pathOptions={steady}
-                radius={1000}
-              />
-            </LayerGroup>
-          );
-        }
-        else if(item.steady==="RISING"){
-          return (
-            <LayerGroup>
-              <Circle
-                center={[item.latitude, item.longitude]}
-                pathOptions={rising}
-                radius={10000}
-              />
-            </LayerGroup>
-          );
-        }
-        else if(item.steady==="FALLING"){
-          return (
-            <LayerGroup>
-              <Circle
-                center={[item.latitude, item.longitude]}
-                pathOptions={falling}
-                radius={1000}
-              />
-            </LayerGroup>
           );
         }
       })}
